@@ -12,16 +12,6 @@ resource "ibm_resource_instance" "workload_protection_instance" {
   location          = var.region
   resource_group_id = data.ibm_resource_group.group.id
   service           = "sysdig-secure"
-  parameters_json   = <<PARAMETERS_JSON
-    {
-      "enable_cspm" : true,
-      "target_accounts" : [{
-        "account_id" : "${data.ibm_iam_account_settings.iam_account_settings.account_id}",
-        "config_crn" : "${ibm_resource_instance.app_configuration_instance.id}",
-        "trusted_profile_id" : "${ibm_iam_trusted_profile.workload_protection_profile.id}"
-      }]
-    }
-  PARAMETERS_JSON
 }
 
 # Trusted Profile for Workload Protection
