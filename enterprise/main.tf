@@ -193,7 +193,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_identity" {
       }
 
     }
-    roles = ["Viewer", "Service Configuration Reader", "Reader", "Manager"] # Manager just to avoid conflict
+    roles = ["Viewer", "Service Configuration Reader", "Reader"]
   }
   committed = "true"
 }
@@ -213,7 +213,7 @@ resource "ibm_iam_policy_template" "profile_template_policy_all_management" {
       }
 
     }
-    roles = ["Viewer", "Service Configuration Reader", "Administrator"] # Administrator just to avoid conflict
+    roles = ["Viewer", "Service Configuration Reader"]
   }
   committed = "true"
 }
