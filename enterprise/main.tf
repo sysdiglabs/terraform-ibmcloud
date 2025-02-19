@@ -226,6 +226,11 @@ resource "ibm_iam_trusted_profile_template" "trusted_profile_template_instance" 
   profile {
     name        = "Trusted Profile for IBM Cloud CSPM in SCC-WP"
     description = "description of Trusted Profile for IBM Cloud CSPM in SCC-WP"
+    identities {
+      iam_id = ibm_resource_instance.app_configuration_instance.crn
+      type = "crn"
+      identifier = ibm_resource_instance.app_configuration_instance.crn
+    }
   }
 
   policy_template_references {
