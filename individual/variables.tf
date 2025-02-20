@@ -1,7 +1,6 @@
 variable "workload_protection_instance_crn" {
   type        = string
-  description = "Namespace of the Security and Compliance Workload Protection agent."
-  default     = "ibm-scc-wp"
+  description = "Workload Protection CRN in the case of usage of an existings"
 }
 
 variable "region" {
