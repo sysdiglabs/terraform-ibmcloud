@@ -1,3 +1,8 @@
+variable "workload_protection_instance_crn" {
+  type        = string
+  description = "Workload Protection CRN in the case of usage of an existings"
+}
+
 variable "region" {
   type        = string
   description = "Region to deploy resources App Configuration in the Management account and Workload Protection in the 'wp_account'"

@@ -13,14 +13,14 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 }
 
 ## Workload Protection ###
-resource "ibm_resource_instance" "workload_protection_instance" {
-  provider          = ibm.wp_account
-  plan              = "graduated-tier"
-  name              = "${var.prefix}-workload-protection"
-  location          = var.region
-  resource_group_id = data.ibm_resource_group.wp_account_group.id
-  service           = "sysdig-secure"
-}
+# resource "ibm_resource_instance" "workload_protection_instance" {
+#   provider          = ibm.wp_account
+#   plan              = "graduated-tier"
+#   name              = "${var.prefix}-workload-protection"
+#   location          = var.region
+#   resource_group_id = data.ibm_resource_group.wp_account_group.id
+#   service           = "sysdig-secure"
+# }
 
 # Trusted Profile for Workload Protection created in the Management account
 resource "ibm_iam_trusted_profile" "workload_protection_profile" {
@@ -53,7 +53,7 @@ resource "ibm_iam_trusted_profile_policy" "policy_workload_protection_apprapp" {
 # Trusted Profile Trust Relationship for Config Service created in the Management account
 resource "ibm_iam_trusted_profile_identity" "trust_relationship_workload_protection" {
   provider      = ibm.management
-  identifier    = ibm_resource_instance.workload_protection_instance.crn
+  identifier    = var.workload_protection_instance_crn
   identity_type = "crn"
   profile_id    = ibm_iam_trusted_profile.workload_protection_profile.id
   type          = "crn"
@@ -255,6 +255,7 @@ data "ibm_enterprise_accounts" "all_accounts" {
 
 # Trusted Profile assignemnt to all accounts
 # We need to filer out the management account
+# TODO: can we apply this everywhere like with a wildcard "*"
 resource "ibm_iam_trusted_profile_template_assignment" "account_settings_template_assignment_instance" {
   provider         = ibm.management
   for_each         = { for account in data.ibm_enterprise_accounts.all_accounts.accounts : account.id => account if account.id != data.ibm_iam_account_settings.iam_account_settings.account_id }
@@ -268,6 +269,8 @@ resource "ibm_iam_trusted_profile_template_assignment" "account_settings_templat
 
 output "command_to_onboard" {
   value = <<PARAMETERS_JSON
-    ibmcloud resource service-instance-update ${ibm_resource_instance.workload_protection_instance.name} -p '{"enable_cspm": true, "target_accounts": [{"config_crn": "${ibm_resource_instance.app_configuration_instance.id}", "account_id": "${var.enterprise_id}", "trusted_profile_id": "${ibm_iam_trusted_profile.workload_protection_profile.id}", "account_type": "ENTERPRISE"}]}' -g ${var.resource_group_name}"
+    Replace the WORKLOAD_PROTECTION_INSTANCE name by your SCC Workload Protection instance name
+
+    ibmcloud resource service-instance-update WORKLOAD_PROTECTION_INSTANCE -p '{"enable_cspm": true, "target_accounts": [{"config_crn": "${ibm_resource_instance.app_configuration_instance.id}", "account_id": "${var.enterprise_id}", "trusted_profile_id": "${ibm_iam_trusted_profile.workload_protection_profile.id}", "account_type": "ENTERPRISE"}]}' -g ${var.resource_group_name}"
   PARAMETERS_JSON
 }
